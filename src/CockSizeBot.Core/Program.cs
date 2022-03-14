@@ -1,7 +1,12 @@
-﻿using Serilog;
+﻿using CockSizeBot.Core;
+using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 using Telegram.Bot;
+using Telegram.Bot.Extensions.Polling;
+using Telegram.Bot.Types;
 
 Log.Logger = new LoggerConfiguration()
+            .Enrich.FromLogContext()
             .MinimumLevel.Debug()
             .WriteTo.Console()
             .WriteTo.File($"logs\\log-{DateTime.UtcNow.ToString("dd/MM/yyyy")}.log",
@@ -10,14 +15,39 @@ Log.Logger = new LoggerConfiguration()
 
 Log.Information("Serilog initialized");
 
-var token = Environment.GetEnvironmentVariable("TelegramBotToken", EnvironmentVariableTarget.Machine);
+var token = Environment.GetEnvironmentVariable(Constants.TelegramBotToken)
+    ?? Environment.GetEnvironmentVariable(Constants.TelegramBotToken, EnvironmentVariableTarget.Machine);
 if (token == null)
 {
     Log.Error("Could not fetch Telegram Bot Token from Environment Variables");
     return;
 }
 
-var botClient = new TelegramBotClient(token);
+var bot = new TelegramBotClient(token);
 
-var me = await botClient.GetMeAsync();
-Console.WriteLine($"Hello, World! I am user {me.Id} and my name is {me.FirstName}.");
+User me = await bot.GetMeAsync();
+Log.Information($"Start listening for @{me.Username}");
+
+var serviceProvider = DependencyInjection
+    .GetServices()
+    .AddTelegramBot(bot)
+    .Build();
+
+var handler = serviceProvider.GetService<IUpdateHandler>();
+
+using var cts = new CancellationTokenSource();
+ReceiverOptions receiverOptions = new() { AllowedUpdates = { } };
+
+bot.StartReceiving(
+    handler.HandleUpdateAsync,
+    handler.HandleErrorAsync,
+    receiverOptions,
+    cts.Token);
+
+while (true)
+{
+    Thread.Sleep(100);
+}
+
+// Send cancellation request to stop bot
+cts.Cancel();
