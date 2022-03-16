@@ -24,6 +24,7 @@ public class TextMessageHandler : ITextMessageHandler
 
         var action = message.Text!.Split(' ')[0] switch
         {
+            "/help" => this.Usage(message),
             _ => this.Usage(message),
         };
         Message sentMessage = await action;
