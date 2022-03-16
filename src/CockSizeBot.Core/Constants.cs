@@ -2,7 +2,7 @@
 
 public static class Constants
 {
-    public const string MyMeasurement = "My cock size is: {0}cm";
+    public const string MyMeasurement = "My cock size is: {0}cm {1}";
     public const string YourMeasurement = "Your cock size is: {0}cm";
     public const string Usage = "Usage:\n" +
                                 "Type @devicesizebot and click Measure button in order to measure your 'device' size\n";

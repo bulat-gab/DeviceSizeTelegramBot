@@ -13,11 +13,13 @@ public class InlineQueryHandler : IInlineQueryHandler
     private readonly ILogger _logger = Log.ForContext<InlineQueryHandler>();
     private readonly ICockSizeService _cockSizeService;
     private readonly ITelegramBotClient _bot;
+    private readonly IEmojiService _emojiService;
 
-    public InlineQueryHandler(ITelegramBotClient bot, ICockSizeService cockSizeService)
+    public InlineQueryHandler(ITelegramBotClient bot, ICockSizeService cockSizeService, IEmojiService emodjiService)
     {
         _cockSizeService = cockSizeService;
         _bot = bot;
+        _emojiService = emodjiService;
     }
 
     public async Task BotOnInlineQueryReceived(InlineQuery inlineQuery)
@@ -30,7 +32,8 @@ public class InlineQueryHandler : IInlineQueryHandler
         {
             _logger.Information($"Received inline query from: {userId}, username: {username}");
             var cockSize = _cockSizeService.GetSize(userId);
-            _logger.Information($"{username} cock size is: {cockSize}");
+            var emoji = _emojiService.GetEmoji(cockSize);
+            _logger.Information($"{username} cock size is: {cockSize} {emoji}");
 
             InlineQueryResult[] results =
             {
@@ -38,7 +41,7 @@ public class InlineQueryHandler : IInlineQueryHandler
                     id: "3",
                     title: "Measure",
                     inputMessageContent:
-                        new InputTextMessageContent(string.Format(Constants.MyMeasurement, cockSize))),
+                        new InputTextMessageContent(string.Format(Constants.MyMeasurement, cockSize, emoji))),
             };
 
             await _bot.AnswerInlineQueryAsync(

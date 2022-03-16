@@ -17,6 +17,7 @@ public static class DependencyInjection
             .AddSingleton<IUpdateHandler, UpdateHandler>()
             .AddSingleton<IInlineQueryHandler, InlineQueryHandler>()
             .AddSingleton<ITextMessageHandler, TextMessageHandler>()
+            .AddSingleton<IEmojiService, EmojiService>()
             ;
     }
 
