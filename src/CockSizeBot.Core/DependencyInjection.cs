@@ -8,9 +8,7 @@ namespace CockSizeBot.Core;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection GetServices()
-    {
-        return new ServiceCollection()
+    public static IServiceCollection GetServices() => new ServiceCollection()
             .AddMemoryCache()
             .AddSingleton<ICockSizeGenerator, CockSizeGenerator>()
             .AddSingleton<ICockSizeService, CockSizeService>()
@@ -19,15 +17,8 @@ public static class DependencyInjection
             .AddSingleton<ITextMessageHandler, TextMessageHandler>()
             .AddSingleton<IEmojiService, EmojiService>()
             ;
-    }
 
-    public static IServiceCollection AddTelegramBot(this IServiceCollection services, ITelegramBotClient bot)
-    {
-        return services.AddSingleton(bot);
-    }
+    public static IServiceCollection AddTelegramBot(this IServiceCollection services, ITelegramBotClient bot) => services.AddSingleton(bot);
 
-    public static IServiceProvider Build(this IServiceCollection services)
-    {
-        return services.BuildServiceProvider();
-    }
+    public static IServiceProvider Build(this IServiceCollection services) => services.BuildServiceProvider();
 }

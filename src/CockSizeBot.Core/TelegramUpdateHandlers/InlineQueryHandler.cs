@@ -9,14 +9,16 @@ namespace CockSizeBot.Core.TelegramUpdateHandlers;
 
 public class InlineQueryHandler : IInlineQueryHandler
 {
-    private readonly ILogger _logger = Log.ForContext<InlineQueryHandler>();
-    private readonly ICockSizeService _cockSizeService;
-    private readonly ITelegramBotClient _bot;
+    private readonly ILogger logger = Log.ForContext<InlineQueryHandler>();
+    private readonly ICockSizeService cockSizeService;
+    private readonly ITelegramBotClient bot;
+    private readonly IEmojiService emojiService;
 
-    public InlineQueryHandler(ITelegramBotClient bot, ICockSizeService cockSizeService)
+    public InlineQueryHandler(ITelegramBotClient bot, ICockSizeService cockSizeService, IEmojiService emodjiService)
     {
-        _cockSizeService = cockSizeService;
-        _bot = bot;
+        this.cockSizeService = cockSizeService;
+        this.bot = bot;
+        this.emojiService = emodjiService;
     }
 
     public async Task BotOnInlineQueryReceived(InlineQuery inlineQuery)
@@ -27,9 +29,10 @@ public class InlineQueryHandler : IInlineQueryHandler
         using (LogContext.PushProperty("userId", userId))
         using (LogContext.PushProperty("username", username))
         {
-            _logger.Information($"Received inline query from: {userId}, username: {username}");
-            var cockSize = _cockSizeService.GetSize(userId);
-            _logger.Information($"{username} cock size is: {cockSize}");
+            this.logger.Information($"Received inline query from: {userId}, username: {username}");
+            var cockSize = this.cockSizeService.GetSize(userId);
+            var emoji = emojiService.GetEmoji(cockSize);
+            this.logger.Information($"{username} cock size is: {cockSize} {emoji}");
 
             InlineQueryResult[] results =
             {
@@ -37,14 +40,14 @@ public class InlineQueryHandler : IInlineQueryHandler
                     id: "3",
                     title: "Measure",
                     inputMessageContent:
-                        new InputTextMessageContent(string.Format(Constants.MyMeasurement, cockSize))),
+                        new InputTextMessageContent(string.Format(Constants.MyMeasurement, cockSize, emoji))),
             };
 
-            await _bot.AnswerInlineQueryAsync(
+            await this.bot.AnswerInlineQueryAsync(
                 inlineQueryId: inlineQuery.Id,
                 results: results,
                 isPersonal: true,
-                cacheTime: Constants.AbsoluteExpirationInSeconds);
+                cacheTime: 3600);
         }
     }
 }

@@ -5,15 +5,9 @@ public class CockSizeGenerator : ICockSizeGenerator
     private const int MinSize = 1;
     private const int MaxSizeExcluded = 51;
 
-    private readonly Random _random;
+    private readonly Random random;
 
-    public CockSizeGenerator()
-    {
-        _random = new Random();
-    }
+    public CockSizeGenerator() => this.random = new Random();
 
-    public int Generate()
-    {
-        return _random.Next(MinSize, MaxSizeExcluded);
-    }
+    public int Generate() => this.random.Next(MinSize, MaxSizeExcluded);
 }

@@ -6,7 +6,7 @@ namespace CockSizeBot.Core.Services;
 public class CockSizeService : ICockSizeService
 {
     private readonly ILogger _logger = Log.ForContext<CockSizeService>();
-    private ICockSizeGenerator _cockSizeGenerator;
+    private readonly ICockSizeGenerator _cockSizeGenerator;
     private readonly IMemoryCache _cache;
 
     public CockSizeService(ICockSizeGenerator cockSizeGenerator, IMemoryCache cache)
