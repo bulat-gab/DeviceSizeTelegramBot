@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CockSizeBot.Infrastructure.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20220321070313_InitialCreate")]
+    [Migration("20220321092415_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,10 +49,7 @@ namespace CockSizeBot.Infrastructure.Migrations
             modelBuilder.Entity("CockSizeBot.Infrastructure.User", b =>
                 {
                     b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<string>("FirstName")
                         .IsRequired()

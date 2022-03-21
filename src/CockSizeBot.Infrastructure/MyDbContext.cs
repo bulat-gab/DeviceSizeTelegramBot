@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CockSizeBot.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace CockSizeBot.Infrastructure;
 

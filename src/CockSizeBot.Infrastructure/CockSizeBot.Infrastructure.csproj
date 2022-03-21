@@ -16,4 +16,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CockSizeBot.Domain\CockSizeBot.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
