@@ -1,4 +1,5 @@
 ﻿using CockSizeBot.Core;
+using CockSizeBot.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Telegram.Bot;

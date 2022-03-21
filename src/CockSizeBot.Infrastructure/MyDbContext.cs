@@ -1,23 +1,26 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace CockSizeBot.Infrastructure;
 
 public class MyDbContext : DbContext
 {
-    protected readonly IConfiguration Configuration;
-
     public DbSet<User> Users { get; set; }
 
     public DbSet<Measurement> Measurements { get; set; }
 
-    public MyDbContext(IConfiguration configuration)
+    public MyDbContext()
     {
-        this.Configuration = configuration;
+    }
+
+    public MyDbContext(DbContextOptions<MyDbContext> options) : base(options)
+    {
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer("Server=tcp:devicesizebot.database.windows.net,1433;Initial Catalog=devicesize-main-db;Persist Security Info=False;User ID=devicesizebot;Password={your_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseSqlServer("Server=127.0.0.1,20030;Initial Catalog=devicesize-main-db;User ID=sa;Password=Your_password123");
+        }
     }
 }
