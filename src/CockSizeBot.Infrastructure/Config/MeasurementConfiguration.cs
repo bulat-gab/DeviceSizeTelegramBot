@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace CockSizeBot.Infrastructure.Config;
 
-public class UserConfiguration : IEntityTypeConfiguration<User>
+public class MeasurementConfiguration : IEntityTypeConfiguration<Measurement>
 {
-    public void Configure(EntityTypeBuilder<User> builder)
+    public void Configure(EntityTypeBuilder<Measurement> builder)
     {
         builder
             .HasKey(u => u.Id)
@@ -17,8 +17,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .IsRequired(true)
             .ValueGeneratedOnAdd();
 
-        builder.Property(u => u.Username)
-            .IsRequired(false)
-            .HasMaxLength(512);
+        builder.HasOne(m => m.User)
+            .WithMany()
+            .HasForeignKey(m => m.User.Id);
     }
 }
