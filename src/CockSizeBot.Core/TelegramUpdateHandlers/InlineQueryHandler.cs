@@ -30,7 +30,7 @@ public class InlineQueryHandler : IInlineQueryHandler
         using (LogContext.PushProperty("username", username))
         {
             this.logger.Information($"Received inline query from: {userId}, username: {username}");
-            var cockSize = this.cockSizeService.GetSize(userId);
+            var cockSize = await this.cockSizeService.GetSize(userId);
             var emoji = emojiService.GetEmoji(cockSize);
             this.logger.Information($"{username} cock size is: {cockSize} {emoji}");
 
@@ -47,7 +47,7 @@ public class InlineQueryHandler : IInlineQueryHandler
                 inlineQueryId: inlineQuery.Id,
                 results: results,
                 isPersonal: true,
-                cacheTime: 3600);
+                cacheTime: Constants.AbsoluteExpirationInSeconds);
         }
     }
 }

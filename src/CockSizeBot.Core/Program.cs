@@ -11,6 +11,7 @@ var bot = await ApplicationInitializer.InitializeTelegramBot();
 var serviceProvider = DependencyInjection
     .GetServices()
     .AddTelegramBot(bot)
+    .AddDbContext<MyDbContext>(ServiceLifetime.Transient)
     .Build();
 
 var handler = serviceProvider.GetService<IUpdateHandler>();

@@ -2,5 +2,5 @@
 
 public interface ICockSizeService
 {
-    public int GetSize(long userId);
+    public Task<int> GetSize(long userId);
 }
