@@ -5,14 +5,14 @@ namespace CockSizeBot.Core.Services;
 
 public class CockSizeService : ICockSizeService
 {
-    private readonly ILogger _logger = Log.ForContext<CockSizeService>();
-    private readonly ICockSizeGenerator _cockSizeGenerator;
-    private readonly IMemoryCache _cache;
+    private readonly ILogger logger = Log.ForContext<CockSizeService>();
+    private readonly ICockSizeGenerator cockSizeGenerator;
+    private readonly IMemoryCache cache;
 
     public CockSizeService(ICockSizeGenerator cockSizeGenerator, IMemoryCache cache)
     {
-        _cockSizeGenerator = cockSizeGenerator;
-        _cache = cache;
+        this.cockSizeGenerator = cockSizeGenerator;
+        this.cache = cache;
     }
 
     /// <summary>
@@ -22,11 +22,11 @@ public class CockSizeService : ICockSizeService
     /// <returns>Integer value.</returns>
     public int GetSize(long userId)
     {
-        if (!_cache.TryGetValue(userId, out int cockSize))
+        if (!cache.TryGetValue(userId, out int cockSize))
         {
-            _logger.Debug($"{userId} cache miss");
-            cockSize = _cockSizeGenerator.Generate();
-            _cache.Set(userId, cockSize, DateTimeOffset.UtcNow.AddHours(24));
+            this.logger.Debug($"{userId} cache miss");
+            cockSize = this.cockSizeGenerator.Generate();
+            cache.Set(userId, cockSize, DateTimeOffset.UtcNow.AddHours(24));
         }
 
         return cockSize;
