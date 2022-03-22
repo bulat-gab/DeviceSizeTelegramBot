@@ -12,6 +12,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CockSizeBot.Domain", "src\CockSizeBot.Domain\CockSizeBot.Domain.csproj", "{4C74244B-EFE6-48A8-ACDD-701D7B8A8471}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CockSizeBot.Infrastructure", "src\CockSizeBot.Infrastructure\CockSizeBot.Infrastructure.csproj", "{53D303F5-68B9-48E4-921F-E96066B4F440}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,12 +26,22 @@ Global
 		{4B542DC4-7054-4A21-BD66-787205FD9B8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B542DC4-7054-4A21-BD66-787205FD9B8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B542DC4-7054-4A21-BD66-787205FD9B8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C74244B-EFE6-48A8-ACDD-701D7B8A8471}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C74244B-EFE6-48A8-ACDD-701D7B8A8471}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C74244B-EFE6-48A8-ACDD-701D7B8A8471}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C74244B-EFE6-48A8-ACDD-701D7B8A8471}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53D303F5-68B9-48E4-921F-E96066B4F440}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53D303F5-68B9-48E4-921F-E96066B4F440}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53D303F5-68B9-48E4-921F-E96066B4F440}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53D303F5-68B9-48E4-921F-E96066B4F440}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4B542DC4-7054-4A21-BD66-787205FD9B8D} = {A74D2054-D435-4CEF-8D53-1715A953FF9D}
+		{4C74244B-EFE6-48A8-ACDD-701D7B8A8471} = {A74D2054-D435-4CEF-8D53-1715A953FF9D}
+		{53D303F5-68B9-48E4-921F-E96066B4F440} = {A74D2054-D435-4CEF-8D53-1715A953FF9D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B82BDF08-9214-4ABF-A6AE-8ADFD8C81937}
