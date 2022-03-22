@@ -8,7 +8,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Moq;
 using NUnit.Framework;
 
-namespace FunctionalTests;
+namespace IntegrationTests;
 
 public class CockSizeServiceTest
 {
@@ -35,6 +35,12 @@ public class CockSizeServiceTest
         this.cache = new MemoryCache(new MemoryCacheOptions());
 
         this.cocksizeService = new CockSizeService(this.cockSizeGenerator, this.cache, this.myDbContext);
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        this.myDbContext.Database.EnsureDeleted();
     }
 
     [Test]
