@@ -173,6 +173,9 @@ csharp_style_allow_blank_lines_between_consecutive_braces_experimental = true:si
 # SA1503: Braces should not be omitted
 dotnet_diagnostic.SA1503.severity = silent
 
+# Readability Rules (SA1100-) https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/1.1.118/DOCUMENTATION.md
+dotnet_diagnostic.SA1127.severity = none    # Noisy for single-line method declarations
+
 [*.vb]
 # Modifier preferences
 visual_basic_preferred_modifier_order = Partial,Default,Private,Protected,Public,Friend,NotOverridable,Overridable,MustOverride,Overloads,Overrides,MustInherit,NotInheritable,Static,Shared,Shadows,ReadOnly,WriteOnly,Dim,Const,WithEvents,Widening,Narrowing,Custom,Async:suggestion
