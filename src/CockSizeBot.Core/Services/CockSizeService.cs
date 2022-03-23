@@ -1,4 +1,5 @@
-﻿using CockSizeBot.Domain;
+﻿using CockSizeBot.Core.Helpers;
+using CockSizeBot.Domain;
 using CockSizeBot.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -30,47 +31,55 @@ public class CockSizeService : ICockSizeService
     /// <returns>Integer value.</returns>
     public async Task<int> GetSize(long userId)
     {
-        DateTime today = DateTime.UtcNow.Date;
-
-        if (cache.TryGetValue(userId, out int valueInCache))
+        try
         {
-            this.logger.Information($"UserId: {userId} size found in cache: {valueInCache}");
-            return valueInCache;
-        }
+            DateTime today = DateTime.UtcNow.Date;
 
-        this.logger.Debug($"{userId} cache miss");
+            if (this.cache.TryGetValue(userId, out int valueInCache))
+            {
+                this.logger.Information($"UserId: {userId} size found in cache: {valueInCache}");
+                return valueInCache;
+            }
 
-        var measurement = await this.myDbContext.Measurements
+            this.logger.Debug($"{userId} cache miss");
+
+            var measurement = await this.myDbContext.Measurements
             .Where(m => m.User.Id == userId && m.Timestamp.Date == today)
             .FirstOrDefaultAsync();
-        if (measurement != null)
-        {
-            this.logger.Information($"UserId: {userId} size found in database: {measurement.CockSize}");
-            return measurement.CockSize;
+            if (measurement != null)
+            {
+                this.logger.Information($"UserId: {userId} size found in database: {measurement.CockSize}");
+                return measurement.CockSize;
+            }
+
+            this.logger.Debug($"{userId} database has no measurements for {today:dd-MM-yyyy}");
+
+            var size = this.cockSizeGenerator.Generate();
+
+            this.AddNewValueToCache(userId, size);
+            await this.AddNewValueToDatabase(userId, size);
+
+            this.logger.Information($"UserId: {userId} new size: {size}");
+
+            return size;
         }
-
-        this.logger.Debug($"{userId} database has no measurements for {today:dd-MM-yyyy}");
-
-        var size = this.cockSizeGenerator.Generate();
-        await this.PersistNewValueAsync(userId, size);
-        this.logger.Information($"UserId: {userId} new size: {size}");
-
-        return size;
+        catch (Exception exception)
+        {
+            var errorMessage = $"{nameof(CockSizeService)} failed.";
+            this.logger.Error(exception, errorMessage);
+            throw new CockSizeBotException(errorMessage, exception);
+        }
     }
 
-    private async Task PersistNewValueAsync(long userId, int size)
+    private void AddNewValueToCache(long userId, int size)
     {
-        this.cache.Set(userId, size, DateTimeOffset.UtcNow.AddSeconds(Constants.AbsoluteExpirationInSeconds));
+        var nextResetTimestamp = DateTimeHelper.GetNextResetTime();
+        this.cache.Set(userId, size, nextResetTimestamp);
+    }
 
-        var measurement = new Measurement
-        {
-            CockSize = size,
-            Timestamp = DateTime.UtcNow,
-            User = new User
-            {
-                Id = userId,
-            },
-        };
+    private async Task AddNewValueToDatabase(long userId, int size)
+    {
+        var measurement = new Measurement(size, userId);
         await this.myDbContext.Measurements.AddAsync(measurement);
     }
 }

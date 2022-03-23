@@ -1,6 +1,5 @@
 ﻿using CockSizeBot.Core.Services;
 using Serilog;
-using Serilog.Context;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.InlineQueryResults;
@@ -25,29 +24,40 @@ public class InlineQueryHandler : IInlineQueryHandler
     {
         long userId = inlineQuery.From.Id;
         string? username = inlineQuery.From.Username;
+        this.logger.Information($"Received inline query from: {userId}, username: {username}");
 
-        using (LogContext.PushProperty("userId", userId))
-        using (LogContext.PushProperty("username", username))
-        {
-            this.logger.Information($"Received inline query from: {userId}, username: {username}");
-            var cockSize = await this.cockSizeService.GetSize(userId);
-            var emoji = emojiService.GetEmoji(cockSize);
-            this.logger.Information($"{username} cock size is: {cockSize} {emoji}");
+        string measurementResult = await this.Measure(userId, username);
 
-            InlineQueryResult[] results =
+        InlineQueryResult[] results =
             {
-                new InlineQueryResultArticle(
-                    id: "3",
-                    title: "Measure",
-                    inputMessageContent:
-                        new InputTextMessageContent(string.Format(Constants.MyMeasurement, cockSize, emoji))),
+                    new InlineQueryResultArticle(
+                        id: "3",
+                        title: "Measure",
+                        inputMessageContent:
+                            new InputTextMessageContent(measurementResult)),
             };
 
-            await this.bot.AnswerInlineQueryAsync(
-                inlineQueryId: inlineQuery.Id,
-                results: results,
-                isPersonal: true,
-                cacheTime: Constants.AbsoluteExpirationInSeconds);
+        await this.bot.AnswerInlineQueryAsync(
+        inlineQueryId: inlineQuery.Id,
+        results: results,
+        isPersonal: true,
+        cacheTime: 0);
+    }
+
+    private async Task<string> Measure(long userId, string? username)
+    {
+        try
+        {
+            var cockSize = await this.cockSizeService.GetSize(userId);
+            var emoji = this.emojiService.GetEmoji(cockSize);
+
+            this.logger.Information($"{username} cock size is: {cockSize} {emoji}");
+
+            return string.Format(Constants.MyMeasurement, cockSize, emoji);
+        }
+        catch (CockSizeBotException)
+        {
+            return Constants.BotIsNotAvailable;
         }
     }
 }

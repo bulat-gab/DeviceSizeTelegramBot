@@ -13,4 +13,6 @@ public static class Constants
     public const int AbsoluteExpirationInSeconds = 3600 * 24;
 
     public const string TelegramBotToken = "TelegramBotToken";
+
+    public const string BotIsNotAvailable = "The bot is not available at the moment.Please try again later.";
 }
