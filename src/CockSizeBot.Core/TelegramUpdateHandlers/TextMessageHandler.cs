@@ -8,19 +8,17 @@ namespace CockSizeBot.Core.TelegramUpdateHandlers;
 
 public class TextMessageHandler : ITextMessageHandler
 {
-    private readonly ILogger _logger = Log.ForContext<TextMessageHandler>();
-    private readonly ITelegramBotClient _bot;
+    private readonly ILogger logger = Log.ForContext<TextMessageHandler>();
+    private readonly ITelegramBotClient bot;
 
-    public TextMessageHandler(ITelegramBotClient bot)
-    {
-        _bot = bot;
-    }
+    public TextMessageHandler(ITelegramBotClient bot) => this.bot = bot;
 
     public async Task BotOnMessageReceived(Message message)
     {
-        _logger.Information($"Received message type: {message.Type}, text: {message.Text}");
         if (message.Type != MessageType.Text || message.ViaBot != null)
             return;
+
+        logger.Information($"Received message: {message.Text}");
 
         var action = message.Text!.Split(' ')[0] switch
         {
@@ -28,14 +26,11 @@ public class TextMessageHandler : ITextMessageHandler
             _ => this.Usage(message),
         };
         Message sentMessage = await action;
-        _logger.Information($"The message was sent with id: {sentMessage.MessageId}");
+        logger.Information($"The message was sent with id: {sentMessage.MessageId}");
     }
 
-    private async Task<Message> Usage(Message message)
-    {
-        return await _bot.SendTextMessageAsync(
+    private async Task<Message> Usage(Message message) => await this.bot.SendTextMessageAsync(
             chatId: message.Chat.Id,
             text: Constants.Usage,
             replyMarkup: new ReplyKeyboardRemove());
-    }
 }
