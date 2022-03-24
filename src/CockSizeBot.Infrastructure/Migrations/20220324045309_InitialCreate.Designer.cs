@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CockSizeBot.Infrastructure.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20220321092415_InitialCreate")]
+    [Migration("20220324045309_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,7 +24,7 @@ namespace CockSizeBot.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("CockSizeBot.Infrastructure.Measurement", b =>
+            modelBuilder.Entity("CockSizeBot.Domain.Measurement", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -38,18 +38,21 @@ namespace CockSizeBot.Infrastructure.Migrations
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.ToTable("Measurements");
                 });
 
-            modelBuilder.Entity("CockSizeBot.Infrastructure.User", b =>
+            modelBuilder.Entity("CockSizeBot.Domain.User", b =>
                 {
                     b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<string>("FirstName")
                         .IsRequired()
