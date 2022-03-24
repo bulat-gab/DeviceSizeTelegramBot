@@ -17,8 +17,11 @@ public class MeasurementConfiguration : IEntityTypeConfiguration<Measurement>
             .IsRequired(true)
             .ValueGeneratedOnAdd();
 
-        builder.HasOne(m => m.User)
+        builder.Property(u => u.UserId)
+            .IsRequired(true);
+
+        builder.HasOne<Measurement>("UserId")
             .WithMany()
-            .HasForeignKey(m => m.User.Id);
+            .HasForeignKey(m => m.UserId);
     }
 }

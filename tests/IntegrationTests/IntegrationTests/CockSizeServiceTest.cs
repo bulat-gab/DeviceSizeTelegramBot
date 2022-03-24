@@ -80,7 +80,7 @@ public class CockSizeServiceTest
             Id = 1,
             Timestamp = DateTime.UtcNow,
             CockSize = 5,
-            User = user,
+            UserId = user.Id,
         };
         this.myDbContext.Users.Add(user);
         this.myDbContext.Measurements.Add(measurement);
@@ -106,14 +106,14 @@ public class CockSizeServiceTest
             Id = 1,
             Timestamp = DateTime.UtcNow.AddDays(-1),
             CockSize = 11,
-            User = user,
+            UserId = user.Id,
         };
         var newMeasurement = new Measurement
         {
             Id = 2,
             Timestamp = DateTime.UtcNow,
             CockSize = 12,
-            User = user,
+            UserId = user.Id,
         };
 
         this.myDbContext.Users.Add(user);

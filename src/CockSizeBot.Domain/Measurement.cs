@@ -8,7 +8,7 @@ public class Measurement
 
     public int CockSize { get; set; }
 
-    public User User { get; set; }
+    public long UserId { get; set; }
 
     public Measurement() { }
 
@@ -16,9 +16,6 @@ public class Measurement
     {
         this.Timestamp = DateTime.UtcNow;
         this.CockSize = cockSize;
-        this.User = new User
-        {
-            Id = userId,
-        };
+        this.UserId = userId;
     }
 }

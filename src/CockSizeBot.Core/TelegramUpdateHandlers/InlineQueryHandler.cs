@@ -22,11 +22,7 @@ public class InlineQueryHandler : IInlineQueryHandler
 
     public async Task BotOnInlineQueryReceived(InlineQuery inlineQuery)
     {
-        long userId = inlineQuery.From.Id;
-        string? username = inlineQuery.From.Username;
-        this.logger.Information($"Received inline query from: {userId}, username: {username}");
-
-        string measurementResult = await this.Measure(userId, username);
+        string measurementResult = await this.Measure(inlineQuery.From);
 
         InlineQueryResult[] results =
             {
@@ -44,10 +40,16 @@ public class InlineQueryHandler : IInlineQueryHandler
         cacheTime: 0);
     }
 
-    private async Task<string> Measure(long userId, string? username)
+    private async Task<string> Measure(Telegram.Bot.Types.User telegramUser)
     {
         try
         {
+            long userId = telegramUser.Id;
+            string? username = telegramUser.Username;
+            this.logger.Information($"Received inline query from: {userId}, username: {username}");
+
+            await this.cockSizeService.EnsureUserExists(telegramUser);
+
             var cockSize = await this.cockSizeService.GetSize(userId);
             var emoji = this.emojiService.GetEmoji(cockSize);
 

@@ -15,9 +15,10 @@ public class TextMessageHandler : ITextMessageHandler
 
     public async Task BotOnMessageReceived(Message message)
     {
-        logger.Information($"Received message type: {message.Type}, text: {message.Text}");
         if (message.Type != MessageType.Text || message.ViaBot != null)
             return;
+
+        logger.Information($"Received message: {message.Text}");
 
         var action = message.Text!.Split(' ')[0] switch
         {

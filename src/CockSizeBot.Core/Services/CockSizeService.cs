@@ -29,7 +29,7 @@ public class CockSizeService : ICockSizeService
     /// </summary>
     /// <param name="userId">Telegram user id.</param>
     /// <returns>Integer value.</returns>
-    public async Task<int> GetSize(long userId)
+    public async Task<int> GetSize(long userId, string? username = null)
     {
         try
         {
@@ -41,18 +41,18 @@ public class CockSizeService : ICockSizeService
                 return valueInCache;
             }
 
-            this.logger.Debug($"{userId} cache miss");
+            this.logger.Debug($"UserId: {userId}, Username: {username} cache miss");
 
             var measurement = await this.myDbContext.Measurements
-            .Where(m => m.User.Id == userId && m.Timestamp.Date == today)
+            .Where(m => m.UserId == userId && m.Timestamp.Date == today)
             .FirstOrDefaultAsync();
             if (measurement != null)
             {
-                this.logger.Information($"UserId: {userId} size found in database: {measurement.CockSize}");
+                this.logger.Information($"UserId: {userId}, Username: {username} size found in database: {measurement.CockSize}");
                 return measurement.CockSize;
             }
 
-            this.logger.Debug($"{userId} database has no measurements for {today:dd-MM-yyyy}");
+            this.logger.Information($"{userId} database has no measurements for {today:dd-MM-yyyy}");
 
             var size = this.cockSizeGenerator.Generate();
 
@@ -81,5 +81,40 @@ public class CockSizeService : ICockSizeService
     {
         var measurement = new Measurement(size, userId);
         await this.myDbContext.Measurements.AddAsync(measurement);
+        this.myDbContext.SaveChanges();
+    }
+
+    public async Task EnsureUserExists(Telegram.Bot.Types.User telegramUser)
+    {
+        if (this.cache.TryGetValue(telegramUser.Id, out var _))
+        {
+            return;
+        }
+
+        this.logger.Information($"UserId: {telegramUser.Id}, Username: {telegramUser.Username} does not exist in cache");
+
+        var user = new User
+        {
+            Id = telegramUser.Id,
+            FirstName = telegramUser.FirstName,
+            LastName = telegramUser.LastName,
+            Username = telegramUser.Username,
+        };
+
+        using var transaction = this.myDbContext.Database.BeginTransaction();
+
+        var userFromDb = await this.myDbContext.Users.FindAsync(user.Id);
+        if (userFromDb != null)
+            return;
+
+        this.logger.Information($"UserId: {telegramUser.Id}, Username: {telegramUser.Username} does not exist in database");
+
+        this.myDbContext.Users.Add(user);
+        this.myDbContext.Database.ExecuteSqlRaw("Set IDENTITY_INSERT Users ON");
+
+        this.myDbContext.SaveChanges();
+        transaction.Commit();
+
+        this.logger.Debug($"UserId: {telegramUser.Id}, Username: {telegramUser.Username} has been added into database");
     }
 }

@@ -15,7 +15,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(u => u.Id)
             .IsRequired(true)
-            .ValueGeneratedOnAdd();
+            .ValueGeneratedNever()
+            ;
 
         builder.Property(u => u.Username)
             .IsRequired(false)
